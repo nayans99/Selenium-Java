@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.support.ui.Select;
 
 public class ticket_booking {
@@ -21,25 +23,31 @@ public static void main(String[] args) {
     searchFlightsErr(driver);
     searchFlights(driver);
     searchHotels(driver);
+   // LogEntries logs = driver.manage().logs().get(LogType.BROWSER);
 }
 public static void searchFlights(WebDriver driver) {
 	driver.get("http://www.spicejet.com/");
 
     driver.manage().window().maximize();
+    logInfo("-------------------Test Case 2-------------------");
+    logInfo("SpiceJet website portal launched");
 
     driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
 
     driver.findElement(By.xpath("//input[@id='ctl00_mainContent_rbtnl_Trip_1']")).click();
+    logInfo("Round trip button found!");
 
     //Select origin
     
     driver.findElement(By.id("ctl00_mainContent_ddl_originStation1_CTXT")).sendKeys("DEL");
+    logInfo("Source - Delhi");
 
     //driver.findElement(By.linkText("Delhi (DEL)")).click();
     sleepPause(1200);
     //Select destination
     driver.findElement(By.id("ctl00_mainContent_ddl_destinationStation1_CTXT")).sendKeys("BOM");
 
+    logInfo("Destination - Mumbai");
    // driver.findElement(By.linkText("Mumbai (BOM)")).click();
 
     WebElement DateWidget = driver.findElement(By.id("ui-datepicker-div"));
@@ -53,7 +61,7 @@ public static void searchFlights(WebDriver driver) {
             break;
         }
     }
-
+    logInfo("To and from date set");
     driver.findElement(By.id("divpaxinfo")).click();
     Select AdultDropdown = new Select(driver.findElement(By.id("ctl00_mainContent_ddl_Adult")));
 
@@ -74,8 +82,10 @@ public static void searchFlights(WebDriver driver) {
 
     CurrencyDropdown.selectByValue("INR");
 
-
+    logInfo("No. of passesngers specified");
     driver.findElement(By.id("ctl00_mainContent_btn_FindFlights")).click();
+    logInfo("Flight search button found");
+    logInfo("Test Case 2 - Search flights passed!");
 }
 public static void searchFlightsErr(WebDriver driver) {
 	driver.get("http://www.spicejet.com/");
@@ -83,8 +93,15 @@ public static void searchFlightsErr(WebDriver driver) {
     driver.manage().window().maximize();
 
     driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-
+    
+    logInfo("Browser launched");
+    logInfo("-------------------Test Case 1-------------------");
+    logInfo("SpiceJet website portal launched");
+    
     driver.findElement(By.id("ctl00_mainContent_btn_FindFlights")).click();
+    
+    logInfo("Flight search button found");
+    logInfo("Test Case 1 - Search flights failed! - Source and destination fields empty.");
 }
 public static void searchHotels(WebDriver driver) {
 	driver.get("http://www.spicejet.com/");
@@ -92,14 +109,26 @@ public static void searchHotels(WebDriver driver) {
     driver.manage().window().maximize();
 
     driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+    logInfo("-------------------Test Case 3-------------------");
+    logInfo("SpiceJet website portal launched");
     
     driver.findElement(By.xpath("//a[@title='Hotels']")).click();
     
+    logInfo("Hotels tab clicked.");
+    
     driver.findElement(By.id("ctl00_mainContent_txtOriginStation1_MST")).sendKeys("Kolkata");
+    
+    logInfo("Lodging city entered - Kolkata");
 
     driver.findElement(By.linkText("Kolkata")).click();
    
     driver.findElement(By.id("ctl00_mainContent_ButtonSubmit_MST")).click();
+    
+    logInfo("Search hotels button found.");
+    logInfo("Search hotels button clicked.");
+    logInfo("Test case 3 - Search hotels : Passed!");
+    driver.close();
+    logInfo("Browser closed");
 
 }
 public static void sleepPause(int ms) {
