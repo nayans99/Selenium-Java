@@ -20,16 +20,20 @@ public static void main(String[] args) {
 
     WebDriver driver = new FirefoxDriver();
     
-    searchFlightsErr(driver);
-    searchFlights(driver);
+    searchFlightsErr(driver, 1);
+    searchFlights(driver,"30", 2);
+    searchFlights(driver, "2", 3);
+    searchFlightsErr(driver, 4);
     searchHotels(driver);
+    driver.close();
+    logInfo("Browser closed");
    // LogEntries logs = driver.manage().logs().get(LogType.BROWSER);
 }
-public static void searchFlights(WebDriver driver) {
+public static void searchFlights(WebDriver driver, String date, int num) {
 	driver.get("http://www.spicejet.com/");
 
     driver.manage().window().maximize();
-    logInfo("-------------------Test Case 2-------------------");
+    logInfo("-------------------Test Case "+num+"-------------------");
     logInfo("SpiceJet website portal launched");
 
     driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
@@ -55,45 +59,55 @@ public static void searchFlights(WebDriver driver) {
 
     for (WebElement cell: columns)
     {
-        if (cell.getText().equals("8"))
+        if (cell.getText().equals(date))
         {
-            cell.findElement(By.linkText("8")).click();
+        	try
+        	{
+        		cell.findElement(By.linkText(date)).click();
+                logInfo("To and from date set");
+                driver.findElement(By.id("divpaxinfo")).click();
+                Select AdultDropdown = new Select(driver.findElement(By.id("ctl00_mainContent_ddl_Adult")));
+
+                AdultDropdown.selectByValue("2");
+               
+
+                Select ChildrenDropdown = new Select(driver.findElement(By.id("ctl00_mainContent_ddl_Child")));
+
+                ChildrenDropdown.selectByValue("1");
+
+
+                Select InfantDropdown = new Select(driver.findElement(By.id("ctl00_mainContent_ddl_Infant")));
+
+                InfantDropdown.selectByValue("1");
+
+
+                Select CurrencyDropdown = new Select(driver.findElement(By.id("ctl00_mainContent_DropDownListCurrency")));
+
+                CurrencyDropdown.selectByValue("INR");
+
+                logInfo("No. of passesngers specified");
+                driver.findElement(By.id("ctl00_mainContent_btn_FindFlights")).click();
+                logInfo("Flight search button found");
+                logInfo("Test Case 2 - Search flights passed!");
+        	}
+        	catch(Exception e)
+            {
+            	logInfo("cannot set date prior to current date");
+            	logInfo("Test case 3 Failed!");
+            }
+            
             break;
         }
     }
-    logInfo("To and from date set");
-    driver.findElement(By.id("divpaxinfo")).click();
-    Select AdultDropdown = new Select(driver.findElement(By.id("ctl00_mainContent_ddl_Adult")));
-
-    AdultDropdown.selectByValue("2");
-   
-
-    Select ChildrenDropdown = new Select(driver.findElement(By.id("ctl00_mainContent_ddl_Child")));
-
-    ChildrenDropdown.selectByValue("1");
-
-
-    Select InfantDropdown = new Select(driver.findElement(By.id("ctl00_mainContent_ddl_Infant")));
-
-    InfantDropdown.selectByValue("1");
-
-
-    Select CurrencyDropdown = new Select(driver.findElement(By.id("ctl00_mainContent_DropDownListCurrency")));
-
-    CurrencyDropdown.selectByValue("INR");
-
-    logInfo("No. of passesngers specified");
-    driver.findElement(By.id("ctl00_mainContent_btn_FindFlights")).click();
-    logInfo("Flight search button found");
-    logInfo("Test Case 2 - Search flights passed!");
+    
 }
-public static void searchFlightsErr(WebDriver driver) {
+public static void searchFlightsErr(WebDriver driver, int num) {
 	driver.get("http://www.spicejet.com/");
 
     driver.manage().window().maximize();
 
     driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-    
+    if(num == 1) {
     logInfo("Browser launched");
     logInfo("-------------------Test Case 1-------------------");
     logInfo("SpiceJet website portal launched");
@@ -102,6 +116,26 @@ public static void searchFlightsErr(WebDriver driver) {
     
     logInfo("Flight search button found");
     logInfo("Test Case 1 - Search flights failed! - Source and destination fields empty.");
+    }
+    else
+    {
+    	logInfo("Browser launched");
+        logInfo("-------------------Test Case 4-------------------");
+        logInfo("SpiceJet website portal launched");
+        
+        driver.findElement(By.id("ctl00_mainContent_ddl_originStation1_CTXT")).sendKeys("DEL");
+        logInfo("Source - Delhi");
+
+        //driver.findElement(By.linkText("Delhi (DEL)")).click();
+        sleepPause(1200);
+        //Select destination
+        driver.findElement(By.id("ctl00_mainContent_ddl_destinationStation1_CTXT")).sendKeys("DEL");
+
+        logInfo("Destination - Delhi");
+        
+        logInfo("Flight search button found");
+        logInfo("Test Case 4 - Search flights failed! - Source and destination fields should not be same.");
+    }
 }
 public static void searchHotels(WebDriver driver) {
 	driver.get("http://www.spicejet.com/");
@@ -109,7 +143,7 @@ public static void searchHotels(WebDriver driver) {
     driver.manage().window().maximize();
 
     driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-    logInfo("-------------------Test Case 3-------------------");
+    logInfo("-------------------Test Case 5-------------------");
     logInfo("SpiceJet website portal launched");
     
     driver.findElement(By.xpath("//a[@title='Hotels']")).click();
@@ -126,9 +160,8 @@ public static void searchHotels(WebDriver driver) {
     
     logInfo("Search hotels button found.");
     logInfo("Search hotels button clicked.");
-    logInfo("Test case 3 - Search hotels : Passed!");
-    driver.close();
-    logInfo("Browser closed");
+    logInfo("Test case 5 - Search hotels : Passed!");
+    
 
 }
 public static void sleepPause(int ms) {
